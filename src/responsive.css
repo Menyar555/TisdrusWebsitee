@@ -178,6 +178,31 @@
   }
 }
 
+/* ─── TISDRUS DNA — force same row, scroll on mobile ─── */
+.dna-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.625rem;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(46,107,229,0.3) transparent;
+}
+.dna-grid::-webkit-scrollbar { height: 4px; }
+.dna-grid::-webkit-scrollbar-track { background: transparent; }
+.dna-grid::-webkit-scrollbar-thumb { background: rgba(46,107,229,0.3); border-radius: 2px; }
+
+@media (max-width: 900px) {
+  .dna-grid { grid-template-columns: repeat(7, minmax(130px, 1fr)); }
+}
+
+/* ─── Global scrollbar ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(46,107,229,0.25); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(46,107,229,0.45); }
+
 /* ─── Dark Input Select ─── */
 select.form-input option {
   background: #020818;

@@ -772,3 +772,47 @@ ul, ol { list-style: none; }
 [data-theme="light"] .card:hover {
   box-shadow: 0 4px 24px rgba(27,45,94,0.12), 0 1px 3px rgba(0,0,0,0.06);
 }
+
+/* ============================================================
+   28. DNA GRID CARDS — enhanced transitions
+   ============================================================ */
+.dna-card {
+  position: relative; overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--r-xl);
+  padding: 1.25rem 1rem;
+  cursor: default;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+  display: flex; flex-direction: column; gap: 0.5rem; height: 100%;
+}
+.dna-card:hover { transform: translateY(-6px) scale(1.02); }
+
+/* ============================================================
+   29. NAVBAR ACTION BUTTON — enhanced
+   ============================================================ */
+.action-btn {
+  display: flex; align-items: center; gap: 0.3rem;
+  padding: 0.475rem 0.75rem;
+  border-radius: var(--r-sm);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.8rem; font-weight: 500;
+}
+.action-btn:hover {
+  background: var(--blue-subtle);
+  border-color: rgba(46,107,229,0.3);
+  color: var(--blue);
+}
+
+/* ============================================================
+   30. SEARCH RESULT HOVER
+   ============================================================ */
+.search-result:hover {
+  background: var(--blue-subtle) !important;
+  color: var(--text-primary) !important;
+}
+

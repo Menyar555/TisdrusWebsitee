@@ -73,43 +73,11 @@ function TeamCard({ member, idx }) {
   )
 }
 
-function TimelineItem({ item, idx }) {
-  return (
-    <div style={{ display:'grid', gridTemplateColumns:'72px 32px 1fr', gap:0, alignItems:'stretch' }}>
-      {/* Year */}
-      <div style={{ paddingTop:'1.375rem', paddingRight:'1rem', textAlign:'right' }}>
-        <span style={{ fontSize:'1.125rem', fontWeight:900, letterSpacing:'-0.04em', color:'var(--orange)', lineHeight:1 }}>{item.year}</span>
-      </div>
-
-      {/* Center line + dot */}
-      <div style={{ display:'flex', flexDirection:'column', alignItems:'center' }}>
-        <div style={{ width:2, flex:1, minHeight:20, background:'linear-gradient(180deg,transparent,var(--border-strong))', marginBottom:0 }} />
-        <div style={{ width:14, height:14, borderRadius:'50%', background:'var(--blue)', flexShrink:0, boxShadow:'0 0 0 3px var(--bg-base), 0 0 0 5px var(--border-strong)' }} />
-        <div style={{ width:2, flex:1, minHeight:20, background:'linear-gradient(180deg,var(--border-strong),transparent)', marginTop:0 }} />
-      </div>
-
-      {/* Content */}
-      <AnimatedSection direction={idx%2===0?'right':'left'} delay={idx*60}>
-        <div style={{ padding:'0 0 1.75rem 1.5rem' }}>
-          <motion.div
-            whileHover={{ x:4 }}
-            style={{ background:'var(--card-bg)', border:'1px solid var(--card-border)', borderRadius:'var(--r-lg)', padding:'1.375rem', backdropFilter:'blur(12px)' }}
-          >
-            <div className="t-label" style={{ color:'var(--blue)', marginBottom:'0.375rem' }}>{item.year}</div>
-            <div style={{ fontSize:'1rem', fontWeight:700, color:'var(--text-primary)', marginBottom:'0.5rem' }}>{item.title}</div>
-            <p style={{ fontSize:'0.875rem', color:'var(--text-secondary)', lineHeight:1.7 }}>{item.desc}</p>
-          </motion.div>
-        </div>
-      </AnimatedSection>
-    </div>
-  )
-}
 
 export default function About() {
   const { t } = useLanguage()
-  const values   = t('about.values.items') || []
-  const team     = t('about.team.members') || []
-  const timeline = t('about.timeline.items') || []
+  const values = t('about.values.items') || []
+  const team   = t('about.team.members') || []
 
   return (
     <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.35 }}>
@@ -201,21 +169,6 @@ export default function About() {
           </AnimatedSection>
           <div className="grid-3 stagger" style={{ gap:'1.5rem' }}>
             {team.map((m, i) => <TeamCard key={i} member={m} idx={i} />)}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Timeline ── */}
-      <section className="section" style={{ background:'var(--bg-surface)' }}>
-        <div className="container section-inner">
-          <AnimatedSection>
-            <div style={{ textAlign:'center', maxWidth:580, margin:'0 auto', marginBottom:'clamp(2.5rem,5vw,4rem)' }}>
-              <div className="eyebrow">Notre histoire</div>
-              <h2 className="t-h2" style={{ color:'var(--text-primary)' }}>{t('about.timeline.title')}</h2>
-            </div>
-          </AnimatedSection>
-          <div style={{ maxWidth:760, margin:'0 auto' }}>
-            {timeline.map((item, i) => <TimelineItem key={i} item={item} idx={i} />)}
           </div>
         </div>
       </section>

@@ -1,12 +1,29 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, X, Menu, Globe, Sun, Moon, ChevronDown, Zap } from 'lucide-react'
+import { Search, X, Menu, Globe, Sun, Moon, ChevronDown, Zap, Shield, Brain, Layers, GraduationCap, ArrowRight } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 import { useTheme } from '../context/ThemeContext'
 import { LogoMark } from './Logo'
 
 const LANGS = { fr: { flag: '🇫🇷', label: 'FR' }, en: { flag: '🇨🇦', label: 'EN' }, ar: { flag: '🇸🇦', label: 'عربي' } }
+
+const SEARCH_INDEX = [
+  { href: '/', label: 'Accueil', desc: 'Page d\'accueil TISDRUS', keywords: ['accueil', 'home', 'tisdrus', 'principal', 'bienvenue'] },
+  { href: '/services', label: 'Services', desc: 'Cybersécurité · IA · Transformation · Formation', keywords: ['services', 'cybersécurité', 'intelligence artificielle', 'ia', 'transformation numérique', 'formation', 'pmp', 'scrum', 'agile', 'sécurité', 'cyber', 'iso', 'nist', 'cloud', 'audit', 'risques', 'gouvernance', 'cissp', 'ceh'] },
+  { href: '/expertise', label: 'Expertise', desc: 'Domaines d\'expertise & certifications', keywords: ['expertise', 'compétences', 'certifications', 'industries', 'secteurs', 'data', 'données', 'mlops', 'zero trust', 'pipeda', 'loi 25', 'devops'] },
+  { href: '/about', label: 'À propos', desc: 'Mission, vision, équipe & valeurs', keywords: ['à propos', 'about', 'mission', 'vision', 'équipe', 'team', 'valeurs', 'histoire', 'fondateur', 'rhouma', 'montréal', 'canada'] },
+  { href: '/contact', label: 'Contact', desc: 'Consultation gratuite · Nous joindre', keywords: ['contact', 'consultation', 'gratuit', 'appel', 'email', 'téléphone', 'formulaire', 'devis', 'projet'] },
+]
+
+function fuzzyScore(query, text) {
+  const q = query.toLowerCase().trim()
+  const t = text.toLowerCase()
+  if (t.includes(q)) return 2
+  const words = q.split(/\s+/)
+  const matched = words.filter(w => t.includes(w))
+  return matched.length / words.length
+}
 
 export default function Navbar() {
   const { t, language, setLanguage } = useLanguage()
@@ -66,8 +83,8 @@ export default function Navbar() {
 
           {/* ── Logo ── */}
           <Link to="/" style={{ flexShrink:0 }}>
-            <motion.div whileHover={{ scale:1.03 }} transition={{ duration:0.2 }}>
-              <LogoMark fontSize="1.3rem" />
+            <motion.div whileHover={{ scale:1.04 }} transition={{ duration:0.2 }}>
+              <LogoMark fontSize="1.75rem" />
             </motion.div>
           </Link>
 
@@ -216,7 +233,7 @@ export default function Navbar() {
               }}
             >
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                <LogoMark fontSize="1.2rem" />
+                <LogoMark fontSize="1.6rem" />
                 <ActionBtn onClick={() => setMenuOpen(false)}><X size={18} /></ActionBtn>
               </div>
 
@@ -263,13 +280,15 @@ export default function Navbar() {
           <motion.div
             initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
             onClick={e => e.target===e.currentTarget && setSearchOpen(false)}
-            style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.72)', zIndex:9999, backdropFilter:'blur(10px)', display:'flex', alignItems:'flex-start', justifyContent:'center', padding:'15vh 1rem 0' }}
+            style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.72)', zIndex:9999, backdropFilter:'blur(10px)', display:'flex', alignItems:'flex-start', justifyContent:'center', padding:'12vh 1rem 0' }}
           >
             <motion.div
-              initial={{ y:-20, opacity:0 }} animate={{ y:0, opacity:1 }} exit={{ y:-20, opacity:0 }}
+              initial={{ y:-24, opacity:0, scale:0.97 }} animate={{ y:0, opacity:1, scale:1 }} exit={{ y:-16, opacity:0, scale:0.97 }}
+              transition={{ duration:0.22, ease:[0.16,1,0.3,1] }}
               className="glass-strong"
-              style={{ width:'100%', maxWidth:580, borderRadius:'var(--r-xl)', overflow:'hidden', boxShadow:'var(--shadow-xl)' }}
+              style={{ width:'100%', maxWidth:600, borderRadius:'var(--r-xl)', overflow:'hidden', boxShadow:'var(--shadow-xl)' }}
             >
+              {/* Input row */}
               <div style={{ display:'flex', alignItems:'center', gap:'0.875rem', padding:'1.125rem 1.5rem', borderBottom:'1px solid var(--border)' }}>
                 <Search size={18} style={{ color:'var(--blue)', flexShrink:0 }} />
                 <input
@@ -278,19 +297,68 @@ export default function Navbar() {
                   onChange={e => setQuery(e.target.value)}
                   placeholder={t('nav.searchPlaceholder')}
                   onKeyDown={e => e.key==='Escape' && setSearchOpen(false)}
-                  style={{ flex:1, background:'transparent', border:'none', color:'var(--text-primary)', fontSize:'1rem', outline:'none' }}
+                  style={{ flex:1, background:'transparent', border:'none', color:'var(--text-primary)', fontSize:'1.0625rem', outline:'none' }}
                 />
-                <button onClick={() => setSearchOpen(false)} style={{ background:'none', border:'none', color:'var(--text-muted)', cursor:'pointer' }}><X size={16} /></button>
+                {query && (
+                  <button onClick={() => setQuery('')} style={{ background:'none', border:'none', color:'var(--text-muted)', cursor:'pointer', display:'flex' }}>
+                    <X size={14} />
+                  </button>
+                )}
+                <button onClick={() => setSearchOpen(false)} style={{ background:'var(--card-bg)', border:'1px solid var(--border)', borderRadius:'var(--r-sm)', padding:'0.2rem 0.5rem', color:'var(--text-muted)', cursor:'pointer', fontSize:'0.72rem', fontWeight:600, letterSpacing:'0.03em' }}>ESC</button>
               </div>
-              {query && (
-                <div style={{ padding:'0.5rem' }}>
-                  {links.filter(l => l.label.toLowerCase().includes(query.toLowerCase())).map(l => (
-                    <Link key={l.href} to={l.href} onClick={() => setSearchOpen(false)} style={{
-                      display:'flex', alignItems:'center', gap:'0.75rem',
+
+              {/* Results */}
+              {query.trim().length > 0 ? (
+                <div style={{ padding:'0.5rem', maxHeight:360, overflowY:'auto' }}>
+                  {(() => {
+                    const results = SEARCH_INDEX
+                      .map(item => {
+                        const haystack = [item.label, item.desc, ...item.keywords].join(' ')
+                        const score = fuzzyScore(query, haystack)
+                        return { ...item, score }
+                      })
+                      .filter(item => item.score > 0)
+                      .sort((a, b) => b.score - a.score)
+                    return results.length > 0 ? results.map(item => (
+                      <Link key={item.href} to={item.href} onClick={() => { setSearchOpen(false); setQuery('') }} style={{
+                        display:'flex', alignItems:'center', gap:'0.875rem',
+                        padding:'0.875rem 1rem', borderRadius:'var(--r-md)',
+                        color:'var(--text-secondary)', transition:'all 0.15s',
+                        textDecoration:'none',
+                      }}
+                        onMouseEnter={e => { e.currentTarget.style.background='var(--blue-subtle)'; e.currentTarget.style.color='var(--text-primary)' }}
+                        onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color='var(--text-secondary)' }}
+                      >
+                        <div style={{ width:34, height:34, borderRadius:'var(--r-sm)', background:'var(--blue-subtle)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                          <Search size={14} style={{ color:'var(--blue)' }} />
+                        </div>
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{ fontWeight:600, fontSize:'0.9rem', color:'var(--text-primary)' }}>{item.label}</div>
+                          <div style={{ fontSize:'0.78rem', color:'var(--text-muted)', marginTop:'0.1rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{item.desc}</div>
+                        </div>
+                        <ArrowRight size={13} style={{ opacity:0.4, flexShrink:0 }} />
+                      </Link>
+                    )) : (
+                      <div style={{ padding:'2rem', textAlign:'center', color:'var(--text-muted)', fontSize:'0.9rem' }}>
+                        Aucun résultat pour «&nbsp;{query}&nbsp;»
+                      </div>
+                    )
+                  })()}
+                </div>
+              ) : (
+                <div style={{ padding:'1rem 0.5rem' }}>
+                  <div style={{ padding:'0.5rem 1rem', fontSize:'0.72rem', fontWeight:600, color:'var(--text-muted)', letterSpacing:'0.06em', textTransform:'uppercase', marginBottom:'0.25rem' }}>Navigation rapide</div>
+                  {SEARCH_INDEX.map(item => (
+                    <Link key={item.href} to={item.href} onClick={() => { setSearchOpen(false); setQuery('') }} style={{
+                      display:'flex', alignItems:'center', gap:'0.875rem',
                       padding:'0.75rem 1rem', borderRadius:'var(--r-md)',
-                      color:'var(--text-secondary)', fontSize:'0.9rem', transition:'all 0.15s',
-                    }}>
-                      <Search size={13} style={{ opacity:0.4 }} /> {l.label}
+                      color:'var(--text-secondary)', transition:'all 0.15s', textDecoration:'none',
+                    }}
+                      onMouseEnter={e => { e.currentTarget.style.background='var(--card-bg)' }}
+                      onMouseLeave={e => { e.currentTarget.style.background='' }}
+                    >
+                      <Search size={13} style={{ opacity:0.35, flexShrink:0 }} />
+                      <span style={{ fontSize:'0.875rem', fontWeight:500 }}>{item.label}</span>
                     </Link>
                   ))}
                 </div>

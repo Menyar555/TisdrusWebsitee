@@ -331,7 +331,7 @@ export default function Home() {
             </div>
           </AnimatedSection>
 
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))', gap:'0.875rem' }} className="stagger">
+          <div className="dna-grid stagger">
             {letters.map((item, i) => (
               <AnimatedSection key={i} delay={i * 55} direction="up">
                 <motion.div
@@ -343,20 +343,21 @@ export default function Home() {
                     position:'relative', overflow:'hidden',
                     background: activeIdx===i ? `linear-gradient(135deg,${letterColors[i]}15,${letterColors[i]}06)` : 'var(--card-bg)',
                     border:`1px solid ${activeIdx===i ? letterColors[i]+'45' : 'var(--card-border)'}`,
-                    borderRadius:'var(--r-xl)', padding:'1.75rem',
+                    borderRadius:'var(--r-xl)', padding:'1.25rem 1rem',
                     cursor:'default', transition:'all 0.3s ease',
-                    display:'flex', flexDirection:'column', gap:'0.625rem',
+                    display:'flex', flexDirection:'column', gap:'0.5rem',
                     boxShadow: activeIdx===i ? `0 12px 40px ${letterColors[i]}20` : 'none',
+                    height:'100%',
                   }}
                 >
                   {/* Gradient top line */}
-                  <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${letterColors[i]},transparent)`, opacity: activeIdx===i ? 1 : 0, transition:'opacity 0.3s' }} />
+                  <div style={{ position:'absolute', top:0, left:0, right:0, height:2, background:`linear-gradient(90deg,${letterColors[i]},transparent)`, opacity: activeIdx===i ? 1 : 0.35, transition:'opacity 0.3s' }} />
 
-                  <div style={{ fontSize:'3.25rem', fontWeight:900, letterSpacing:'-0.05em', lineHeight:1, color:letterColors[i], textShadow:`0 0 24px ${letterColors[i]}60` }}>
+                  <div style={{ fontSize:'2.5rem', fontWeight:900, letterSpacing:'-0.05em', lineHeight:1, color:letterColors[i], textShadow:`0 0 20px ${letterColors[i]}55` }}>
                     {item.letter}
                   </div>
-                  <div style={{ fontSize:'1rem', fontWeight:700, color:'var(--text-primary)' }}>{item.word}</div>
-                  <p style={{ fontSize:'0.8125rem', color:'var(--text-secondary)', lineHeight:1.65, flex:1 }}>{item.description}</p>
+                  <div style={{ fontSize:'0.875rem', fontWeight:700, color:'var(--text-primary)' }}>{item.word}</div>
+                  <p style={{ fontSize:'0.75rem', color:'var(--text-secondary)', lineHeight:1.6, flex:1 }}>{item.description}</p>
                 </motion.div>
               </AnimatedSection>
             ))}
