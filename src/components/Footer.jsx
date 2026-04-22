@@ -1,8 +1,81 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Mail, Phone, MapPin, Linkedin, X as XIcon, ArrowUpRight, Zap } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Mail, Phone, MapPin, Linkedin, X as XIcon, ArrowUpRight, Zap, Send, CheckCircle, ArrowRight } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 import { LogoFull } from './Logo'
+
+function NewsletterForm() {
+  const [email, setEmail]     = useState('')
+  const [sent, setSent]       = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const submit = (e) => {
+    e.preventDefault()
+    if (!email) return
+    setLoading(true)
+    setTimeout(() => { setLoading(false); setSent(true) }, 900)
+  }
+
+  return (
+    <div style={{ marginTop:'1.5rem' }}>
+      <div style={{ fontSize:'0.72rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', color:'var(--text-muted)', marginBottom:'0.75rem' }}>
+        Veille & Insights
+      </div>
+      <AnimatePresence mode="wait">
+        {!sent ? (
+          <motion.form
+            key="form"
+            initial={{ opacity:1 }} exit={{ opacity:0, y:-8 }}
+            onSubmit={submit}
+            style={{ display:'flex', gap:'0.5rem' }}
+          >
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="votre@email.com"
+              required
+              style={{
+                flex:1, padding:'0.6rem 0.875rem',
+                background:'var(--card-bg)', border:'1px solid var(--card-border)',
+                borderRadius:'var(--r-md)', color:'var(--text-primary)',
+                fontSize:'0.8125rem', outline:'none',
+                transition:'border-color 0.2s',
+              }}
+              onFocus={e => e.target.style.borderColor='var(--blue)'}
+              onBlur={e => e.target.style.borderColor=''}
+            />
+            <motion.button
+              type="submit"
+              whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }}
+              disabled={loading}
+              style={{
+                padding:'0.6rem 0.875rem', borderRadius:'var(--r-md)',
+                background:'var(--blue)', border:'none', color:'#fff',
+                cursor:'pointer', display:'flex', alignItems:'center',
+                opacity: loading ? 0.7 : 1, transition:'opacity 0.2s',
+              }}
+            >
+              {loading
+                ? <motion.div animate={{ rotate:360 }} transition={{ repeat:Infinity, duration:0.8, ease:'linear' }}><Send size={14} /></motion.div>
+                : <Send size={14} />
+              }
+            </motion.button>
+          </motion.form>
+        ) : (
+          <motion.div
+            key="success"
+            initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }}
+            style={{ display:'flex', alignItems:'center', gap:'0.5rem', color:'#22c55e', fontSize:'0.8125rem', fontWeight:600 }}
+          >
+            <CheckCircle size={16} /> Merci ! Vous êtes inscrit.
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 export default function Footer() {
   const { t } = useLanguage()
@@ -28,19 +101,30 @@ export default function Footer() {
       <div style={{ height:2, background:'linear-gradient(90deg,transparent,var(--orange),var(--blue),transparent)', opacity:0.5 }} />
 
       {/* CTA Banner */}
-      <div style={{ background:'linear-gradient(135deg,rgba(59,130,246,0.08),rgba(124,58,237,0.05))', borderBottom:'1px solid var(--border)', padding:'2.5rem 0', position:'relative' }}>
+      <div style={{ background:'linear-gradient(135deg,rgba(59,130,246,0.09),rgba(124,58,237,0.06))', borderBottom:'1px solid var(--border)', padding:'2.5rem 0', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', inset:0, backgroundImage:'radial-gradient(var(--border) 1px, transparent 1px)', backgroundSize:'24px 24px', opacity:0.4 }} />
+        <div style={{ position:'absolute', top:'-30%', right:'-5%', width:320, height:320, borderRadius:'50%', background:'radial-gradient(circle,rgba(232,120,32,0.08) 0%,transparent 70%)', pointerEvents:'none' }} />
         <div className="container" style={{ position:'relative', zIndex:1 }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'1.5rem', flexWrap:'wrap' }}>
             <div>
+              {/* Live badge */}
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.625rem', padding:'0.25rem 0.75rem', borderRadius:'var(--r-full)', background:'rgba(34,197,94,0.1)', border:'1px solid rgba(34,197,94,0.25)' }}>
+                <span style={{ width:7, height:7, borderRadius:'50%', background:'#22c55e', display:'block', boxShadow:'0 0 8px rgba(34,197,94,0.8)', animation:'glow-pulse 1.8s ease-in-out infinite' }} />
+                <span style={{ fontSize:'0.7rem', fontWeight:700, color:'#22c55e', letterSpacing:'0.05em', textTransform:'uppercase' }}>Disponible maintenant</span>
+              </div>
               <h3 style={{ fontSize:'1.375rem', fontWeight:700, color:'var(--text-primary)', marginBottom:'0.25rem' }}>
                 Prêt à accélérer votre transformation ?
               </h3>
               <p style={{ color:'var(--text-muted)', fontSize:'0.9rem' }}>{t('contact.consultation.desc')}</p>
             </div>
-            <Link to="/contact" className="btn btn-primary btn-lg" style={{ flexShrink:0, whiteSpace:'nowrap' }}>
-              <Zap size={16} /> {t('contact.consultation.cta')} <ArrowUpRight size={15} />
-            </Link>
+            <div style={{ display:'flex', gap:'0.75rem', flexWrap:'wrap', flexShrink:0 }}>
+              <Link to="/contact" className="btn btn-primary btn-lg" style={{ whiteSpace:'nowrap' }}>
+                <Zap size={16} /> {t('contact.consultation.cta')} <ArrowUpRight size={15} />
+              </Link>
+              <Link to="/services" className="btn btn-ghost btn-lg" style={{ whiteSpace:'nowrap' }}>
+                Nos services <ArrowRight size={15} />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -57,28 +141,33 @@ export default function Footer() {
             <p style={{ color:'var(--text-muted)', fontSize:'0.875rem', lineHeight:1.65, marginBottom:'1.25rem', maxWidth:240 }}>{t('footer.tagline')}</p>
             <div style={{ display:'flex', gap:'0.5rem' }}>
               {[
-                { href:'https://linkedin.com/company/tisdrus', icon:Linkedin, label:'LinkedIn' },
-                { href:'https://x.com/tisdrus',                icon:XIcon,    label:'X' },
-                { href:'mailto:info@tisdrus.com',              icon:Mail,     label:'Email' },
-              ].map(({ href, icon:Ico, label }) => (
+                { href:'https://linkedin.com/company/tisdrus', icon:Linkedin, label:'LinkedIn', hoverColor:'#0077b5' },
+                { href:'https://x.com/tisdrus',                icon:XIcon,    label:'X',        hoverColor:'var(--text-primary)' },
+                { href:'mailto:info@tisdrus.com',              icon:Mail,     label:'Email',    hoverColor:'var(--blue)' },
+              ].map(({ href, icon:Ico, label, hoverColor }) => (
                 <motion.a
                   key={label}
                   href={href}
                   target={href.startsWith('http') ? '_blank' : undefined}
                   rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
                   aria-label={label}
-                  whileHover={{ y:-2, scale:1.08 }}
+                  whileHover={{ y:-3, scale:1.12 }}
                   style={{
                     width:36, height:36, borderRadius:8,
                     background:'var(--card-bg)', border:'1px solid var(--card-border)',
                     display:'flex', alignItems:'center', justifyContent:'center',
                     color:'var(--text-muted)', transition:'all 0.2s', textDecoration:'none',
                   }}
+                  onMouseEnter={e => { e.currentTarget.style.color = hoverColor; e.currentTarget.style.borderColor = hoverColor + '60' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = ''; e.currentTarget.style.borderColor = '' }}
                 >
                   <Ico size={15} />
                 </motion.a>
               ))}
             </div>
+
+            {/* Newsletter */}
+            <NewsletterForm />
           </div>
 
           {/* Services */}

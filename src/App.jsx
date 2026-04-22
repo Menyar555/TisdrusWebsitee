@@ -3,6 +3,8 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import ScrollProgress from './components/ScrollProgress'
+import FloatingCTA from './components/FloatingCTA'
 import Home from './pages/Home'
 import Services from './pages/Services'
 import Expertise from './pages/Expertise'
@@ -29,6 +31,7 @@ export default function App() {
 
   return (
     <div className={`app ${isRTL ? 'rtl' : 'ltr'}`}>
+      <ScrollProgress />
       <ScrollToTop />
       <Navbar />
       <AnimatePresence mode="wait">
@@ -41,6 +44,7 @@ export default function App() {
         </Routes>
       </AnimatePresence>
       <Footer />
+      <FloatingCTA />
     </div>
   )
 }

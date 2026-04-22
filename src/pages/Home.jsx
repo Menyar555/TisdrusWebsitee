@@ -1,15 +1,180 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   ArrowRight, Shield, Brain, Layers, GraduationCap,
   Building2, Landmark, Heart, Radio, Zap, ShoppingBag,
   BookOpen, ChevronRight, CheckCircle, Quote,
   Linkedin, Mail, TrendingUp, Users, Target, MapPin,
-  XCircle, Clock, ArrowUpRight,
+  XCircle, Clock, ArrowUpRight, ChevronLeft, Star,
 } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 import AnimatedSection from '../components/AnimatedSection'
+
+/* ────────────────────────────────────────────────
+   Typewriter highlight — cycles through phrases
+──────────────────────────────────────────────── */
+function TypewriterHighlight({ texts }) {
+  const [index, setIndex] = useState(0)
+
+  useEffect(() => {
+    const t = setInterval(() => setIndex(i => (i + 1) % texts.length), 2800)
+    return () => clearInterval(t)
+  }, [texts.length])
+
+  return (
+    <span style={{ display: 'inline-block', position: 'relative', minWidth: '1ch' }}>
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={index}
+          initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, y: -20, filter: 'blur(4px)' }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          className="text-grad-blue"
+          style={{ display: 'inline-block' }}
+        >
+          {texts[index]}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  )
+}
+
+/* ────────────────────────────────────────────────
+   Testimonial auto-carousel
+──────────────────────────────────────────────── */
+function TestimonialCarousel({ items }) {
+  const [active, setActive]   = useState(0)
+  const [dir, setDir]         = useState(1)
+  const timerRef              = useRef(null)
+  const count                 = items.length
+
+  const go = (next) => {
+    setDir(next > active ? 1 : -1)
+    setActive(next)
+  }
+  const prev = () => go((active - 1 + count) % count)
+  const next = () => go((active + 1) % count)
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setDir(1)
+      setActive(i => (i + 1) % count)
+    }, 5000)
+    return () => clearInterval(timerRef.current)
+  }, [count])
+
+  const resetTimer = (fn) => {
+    clearInterval(timerRef.current)
+    fn()
+    timerRef.current = setInterval(() => {
+      setDir(1)
+      setActive(i => (i + 1) % count)
+    }, 5000)
+  }
+
+  const variants = {
+    enter: d => ({ opacity: 0, x: d > 0 ? 60 : -60, filter: 'blur(4px)' }),
+    center: { opacity: 1, x: 0, filter: 'blur(0px)' },
+    exit:  d => ({ opacity: 0, x: d > 0 ? -40 : 40, filter: 'blur(4px)' }),
+  }
+
+  if (!items || items.length === 0) return null
+  const item = items[active]
+
+  return (
+    <div style={{ position: 'relative', overflow: 'hidden' }}>
+      <AnimatePresence mode="wait" custom={dir}>
+        <motion.div
+          key={active}
+          custom={dir}
+          variants={variants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            background: 'var(--card-bg)',
+            border: '1px solid var(--card-border)',
+            borderRadius: 'var(--r-xl)',
+            padding: 'clamp(2rem,4vw,3rem)',
+            position: 'relative', overflow: 'hidden',
+          }}
+        >
+          {/* Accent top */}
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'linear-gradient(90deg, var(--blue), var(--cyan), transparent)' }} />
+
+          {/* Big quote mark */}
+          <Quote size={48} style={{ color: 'var(--blue)', opacity: 0.15, marginBottom: '1.25rem' }} />
+
+          {/* Stars */}
+          <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1.25rem' }}>
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={15} style={{ color: 'var(--orange)', fill: 'var(--orange)' }} />
+            ))}
+          </div>
+
+          <p style={{ fontSize: 'clamp(1rem,1.8vw,1.1875rem)', color: 'var(--text-secondary)', lineHeight: 1.85, fontStyle: 'italic', marginBottom: '2rem' }}>
+            &ldquo;{item.quote}&rdquo;
+          </p>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            {/* Avatar */}
+            <div style={{
+              width: 48, height: 48, borderRadius: '50%', flexShrink: 0,
+              background: 'var(--grad-blue)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.04em',
+            }}>
+              {item.name?.split(' ').map(n => n[0]).join('').slice(0, 2)}
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--text-primary)' }}>{item.name}</div>
+              <div style={{ fontSize: '0.8125rem', color: 'var(--orange)', fontWeight: 500 }}>{item.role}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{item.company}</div>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Controls */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.5rem' }}>
+        {/* Dots */}
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {items.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => resetTimer(() => go(i))}
+              style={{
+                width: i === active ? 24 : 8, height: 8, borderRadius: 4,
+                background: i === active ? 'var(--blue)' : 'var(--border-strong)',
+                border: 'none', cursor: 'pointer', padding: 0,
+                transition: 'all 0.35s ease',
+              }}
+            />
+          ))}
+        </div>
+        {/* Arrow buttons */}
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {[{ fn: () => resetTimer(prev), icon: ChevronLeft }, { fn: () => resetTimer(next), icon: ChevronRight }].map(({ fn, icon: Ico }, i) => (
+            <button key={i} onClick={fn} style={{
+              width: 36, height: 36, borderRadius: 8,
+              background: 'var(--card-bg)', border: '1px solid var(--card-border)',
+              color: 'var(--text-muted)', cursor: 'pointer', display: 'flex',
+              alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--blue)'; e.currentTarget.style.color = 'var(--blue)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.color = 'var(--text-muted)' }}
+            >
+              <Ico size={16} />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 /* ────────────────────────────────────────────────
    Animated Blob Background
@@ -113,16 +278,24 @@ export default function Home() {
   const heroY  = useTransform(scrollYProgress, [0,1], [0, 100])
   const heroOp = useTransform(scrollYProgress, [0,0.75], [1, 0])
 
-  const letters      = t('tisdrus.letters')       || []
-  const valueItems   = t('values.items')          || []
-  const services     = t('servicesPreview.items') || []
-  const industries   = t('industries.items')      || []
-  const resultItems  = t('results.items')         || []
-  const problemItems = t('problems.items')        || []
-  const processItems = t('process.items')         || []
-  const whyUsItems   = t('whyUs.items')           || []
-  const clientItems  = t('clientTypes.items')     || []
-  const insightItems = t('insights.items')        || []
+  const letters        = t('tisdrus.letters')         || []
+  const valueItems     = t('values.items')            || []
+  const services       = t('servicesPreview.items')   || []
+  const industries     = t('industries.items')        || []
+  const resultItems    = t('results.items')           || []
+  const problemItems   = t('problems.items')          || []
+  const processItems   = t('process.items')           || []
+  const whyUsItems     = t('whyUs.items')             || []
+  const clientItems    = t('clientTypes.items')       || []
+  const insightItems   = t('insights.items')          || []
+  const testimonials   = t('testimonials.items')      || []
+
+  const heroHighlights = [
+    t('hero.titleHighlight'),
+    'de Transformation Numérique',
+    'de Gouvernance des Données',
+    'de Résilience Organisationnelle',
+  ]
 
   const stats = [
     { to:'150', suffix:'+', label: t('hero.stat1.label') },
@@ -160,7 +333,7 @@ export default function Home() {
                 style={{ color:'var(--text-primary)', marginBottom:'1.5rem' }}
               >
                 {t('hero.title')}{' '}
-                <span className="text-grad-blue">{t('hero.titleHighlight')}</span>
+                <TypewriterHighlight texts={heroHighlights} />
               </motion.h1>
 
               <motion.p
@@ -790,6 +963,45 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ══════════════════════════════════════════
+          TESTIMONIALS — AUTO CAROUSEL
+      ══════════════════════════════════════════ */}
+      {testimonials.length > 0 && (
+        <section className="section" style={{ background:'var(--bg-surface)', position:'relative', overflow:'hidden' }}>
+          <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse 60% 70% at 50% 50%, rgba(46,107,229,0.06) 0%, transparent 70%)', pointerEvents:'none' }} />
+          <div className="container section-inner">
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'5rem', alignItems:'center' }}>
+
+              {/* Left — header */}
+              <AnimatedSection direction="left">
+                <div className="eyebrow" style={{ marginBottom:'1rem' }}>{t('testimonials.label')}</div>
+                <h2 className="t-h2" style={{ color:'var(--text-primary)', marginBottom:'1.5rem' }}>{t('testimonials.title')}</h2>
+                <p style={{ color:'var(--text-secondary)', lineHeight:1.8, marginBottom:'2rem' }}>
+                  Des organisations leaders au Canada nous font confiance pour leurs enjeux les plus critiques.
+                </p>
+                {/* Trust badges */}
+                <div style={{ display:'flex', flexWrap:'wrap', gap:'0.625rem' }}>
+                  {['ISO 27001','NIST','PMI','SAFe','PIPEDA'].map(badge => (
+                    <span key={badge} style={{
+                      padding:'0.3rem 0.75rem', borderRadius:'var(--r-full)',
+                      background:'var(--blue-subtle)', border:'1px solid rgba(46,107,229,0.22)',
+                      color:'var(--blue)', fontSize:'0.72rem', fontWeight:700, letterSpacing:'0.04em',
+                    }}>
+                      {badge}
+                    </span>
+                  ))}
+                </div>
+              </AnimatedSection>
+
+              {/* Right — carousel */}
+              <AnimatedSection direction="right">
+                <TestimonialCarousel items={testimonials} />
+              </AnimatedSection>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ══════════════════════════════════════════
           CEO MESSAGE — PREMIUM SPLIT LAYOUT
