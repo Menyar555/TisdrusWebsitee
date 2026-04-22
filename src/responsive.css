@@ -1,0 +1,206 @@
+/* ============================================
+   TISDRUS — Responsive Styles
+   ============================================ */
+
+/* ─── Ticker Animation ─── */
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ─── Orb Drift ─── */
+@keyframes orb-drift {
+  0%, 100% { transform: translate(0, 0) scale(1) translateY(-50%); }
+  33% { transform: translate(30px, -20px) scale(1.05) translateY(-50%); }
+  66% { transform: translate(-20px, 10px) scale(0.98) translateY(-50%); }
+}
+
+/* ─── Navbar Hover Effects ─── */
+.navbar a:hover { color: white !important; }
+.footer-link:hover { color: white !important; }
+
+/* ─── Tablet ─── */
+@media (max-width: 1024px) {
+  /* Expertise responsive */
+  [style*="gridTemplateColumns: auto 1fr"],
+  [style*="gridTemplateColumns: 1fr auto"] {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+
+  /* CEO grid */
+  .ceo-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Skill bars show side by side */
+  [style*="minWidth: 320px"] {
+    max-width: 100% !important;
+    min-width: unset !important;
+  }
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 768px) {
+  /* Container padding */
+  :root {
+    --container-pad: 1.25rem;
+  }
+
+  /* Nav hide */
+  .hide-mobile { display: none !important; }
+  .hide-desktop { display: flex !important; }
+
+  /* Hero text */
+  .text-display {
+    font-size: clamp(2rem, 10vw, 3rem) !important;
+  }
+
+  /* Stats row */
+  [style*="display: flex"][style*="gap: 2.5rem"] {
+    gap: 1.5rem !important;
+    flex-wrap: wrap !important;
+  }
+
+  /* Hero buttons */
+  [style*="display: flex"][style*="gap: 1rem"][style*="flexWrap: wrap"] {
+    flex-direction: column !important;
+  }
+
+  /* Ticker items */
+  .ticker-item { font-size: 0.7rem !important; }
+
+  /* Letter grid */
+  [style*="gridTemplateColumns: repeat(auto-fit, minmax(220px, 1fr))"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Industry grid */
+  [style*="gridTemplateColumns: repeat(auto-fit, minmax(160px, 1fr))"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Service cards */
+  [style*="gridTemplateColumns: repeat(auto-fit, minmax(260px, 1fr))"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* CEO section - always stack */
+  [style*="gridTemplateColumns: auto 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+
+  /* CEO photo smaller */
+  [style*="width: 200px"][style*="height: 200px"] {
+    width: 140px !important;
+    height: 140px !important;
+  }
+
+  /* Contact main grid */
+  [style*="gridTemplateColumns: 1fr 380px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* About mission grid */
+  [style*="gridTemplateColumns: repeat(auto-fit, minmax(280px, 1fr))"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Values 3-col → 1-col */
+  .grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Team grid */
+  .grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Benefits row */
+  [style*="gridTemplateColumns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Timeline item */
+  [style*="gridTemplateColumns: 80px 40px 1fr"] {
+    grid-template-columns: 30px 1fr !important;
+    gap: 0 !important;
+  }
+
+  /* Footer CTA banner */
+  [style*="display: flex"][style*="justifyContent: space-between"][style*="alignItems: center"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* Footer grid */
+  [style*="gridTemplateColumns: repeat(auto-fit, minmax(180px, 1fr))"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 2rem !important;
+  }
+
+  /* Block header inner */
+  [style*="display: flex"][style*="alignItems: flex-start"][style*="gap: 1.5rem"] {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  /* Expertise stats grid */
+  [style*="gridTemplateColumns: repeat(3, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Form name row */
+  [style*="display: flex"][style*="gap: 1rem"][style*="flexWrap: wrap"] {
+    flex-direction: column !important;
+  }
+
+  /* Quick nav pills */
+  [style*="marginTop: 2.5rem"][style*="flexWrap: wrap"] {
+    gap: 0.5rem !important;
+  }
+
+  /* Section padding */
+  .section {
+    padding: clamp(3rem, 6vw, 5rem) 0 !important;
+  }
+}
+
+/* ─── Small Mobile ─── */
+@media (max-width: 480px) {
+  .letter-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  [style*="gridTemplateColumns: repeat(auto-fit, minmax(220px, 1fr))"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* ─── Dark Input Select ─── */
+select.form-input option {
+  background: #020818;
+  color: white;
+}
+
+/* ─── Search Input ─── */
+.search-input:-webkit-autofill {
+  background: transparent !important;
+  -webkit-text-fill-color: white !important;
+}
+
+/* ─── Smooth hover on links ─── */
+a { transition: color 0.2s ease; }
+
+/* ─── Focus visible ─── */
+:focus-visible {
+  outline: 2px solid rgba(249,115,22,0.5);
+  outline-offset: 2px;
+}
+
+/* ─── Print ─── */
+@media print {
+  .navbar, footer { display: none; }
+  body { background: white; color: black; }
+}
